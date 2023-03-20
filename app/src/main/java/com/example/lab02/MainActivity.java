@@ -46,7 +46,6 @@ public class MainActivity extends AppCompatActivity {
 
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS, Manifest.permission.RECEIVE_SMS, Manifest.permission.READ_SMS}, 0);
 
-
         IntentFilter smsReceivedFilter = new IntentFilter("SMS_RECEIVED_ACTION");
         SMSReceiver mySMS = new SMSReceiver();
         registerReceiver(smsReceiver, smsReceivedFilter);
@@ -84,14 +83,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void doublePrice(View view) {
-        String bookPrice = editTextBkPrice.getText().toString();
-
-        double price = Double.parseDouble(bookPrice);
-        price *= 2;
-        editTextBkPrice.setText(String.valueOf(price));
-    }
-
     private void saveBookData() {
         SharedPreferences myData = getPreferences(0);
         SharedPreferences.Editor myEditor = myData.edit();
@@ -112,13 +103,6 @@ public class MainActivity extends AppCompatActivity {
         editTextBkDesc.setText(myData.getString("bkDesc", ""));
         editTextBkPrice.setText(myData.getString("bkPrice", ""));
         editTextBkId.setText(myData.getString("bkId", ""));
-    }
-
-    public void saveIsbn(View view) {
-        SharedPreferences myData = getPreferences(0);
-        SharedPreferences.Editor myEditor = myData.edit();
-        myEditor.putString("bkIsbn", "00112233");
-        myEditor.commit();
     }
 
     public void loadBookDataBtn(View view) {
