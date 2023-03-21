@@ -35,8 +35,7 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintHorizontal_chainStyle="spread_inside"
             app:layout_constraintStart_toStartOf="@+id/guideline2"
-            app:layout_constraintTop_toTopOf="@+id/guideline3"
-            app:layout_constraintVertical_bias="0.451" />
+            app:layout_constraintTop_toTopOf="@+id/guideline3" />
 
         <EditText
             android:id="@+id/editTextBkPrice"
@@ -63,8 +62,7 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintHorizontal_chainStyle="spread_inside"
             app:layout_constraintStart_toStartOf="@+id/guideline2"
-            app:layout_constraintTop_toTopOf="@+id/guideline4"
-            app:layout_constraintVertical_bias="0.543" />
+            app:layout_constraintTop_toTopOf="@+id/guideline4" />
 
         <TextView
             android:id="@+id/textViewBkAuthor"
