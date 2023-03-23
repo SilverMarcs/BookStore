@@ -10,6 +10,8 @@ import android.widget.Toast;
 
 
 public class SMSReceiver extends BroadcastReceiver {
+    public static final String SMS_FILTER = "SMS_FILTER";
+    public static final String SMS_MSG_KEY = "SMS_MSG_KEY";
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -17,10 +19,9 @@ public class SMSReceiver extends BroadcastReceiver {
         for (int i = 0; i < messages.length; i++) {
             SmsMessage currentMessage = messages[i];
             String message = currentMessage.getDisplayMessageBody();
-            Toast.makeText(context, message, Toast.LENGTH_LONG).show();
 
-            Intent smsReceivedIntent = new Intent("SMS_RECEIVED_ACTION");
-            smsReceivedIntent.putExtra("message", message);
+            Intent smsReceivedIntent = new Intent(SMS_FILTER);
+            smsReceivedIntent.putExtra(SMS_MSG_KEY, message);
             context.sendBroadcast(smsReceivedIntent);
         }
     }

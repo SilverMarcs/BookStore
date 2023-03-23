@@ -18,6 +18,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import java.util.Arrays;
+import java.util.StringTokenizer;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -46,24 +47,28 @@ public class MainActivity extends AppCompatActivity {
 
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS, Manifest.permission.RECEIVE_SMS, Manifest.permission.READ_SMS}, 0);
 
-        IntentFilter smsReceivedFilter = new IntentFilter("SMS_RECEIVED_ACTION");
-        SMSReceiver mySMS = new SMSReceiver();
+        IntentFilter smsReceivedFilter = new IntentFilter(SMSReceiver.SMS_FILTER);
         registerReceiver(smsReceiver, smsReceivedFilter);
-
     }
 
     BroadcastReceiver smsReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            String message = intent.getStringExtra("message");
-            String[] attributes = message.split("\\|");
+            String message = intent.getStringExtra(SMSReceiver.SMS_MSG_KEY);
+            StringTokenizer sT = new StringTokenizer(message, "|");
 
-            editTextBkId.setText(attributes[0]);
-            editTextBkTitle.setText(attributes[1]);
-            editTextBkIsbn.setText(attributes[2]);
-            editTextBkAuthor.setText(attributes[3]);
-            editTextBkDesc.setText(attributes[4]);
-            editTextBkPrice.setText(attributes[5]);
+            editTextBkId.setText(sT.nextToken());
+            editTextBkTitle.setText(sT.nextToken());
+            editTextBkIsbn.setText(sT.nextToken());
+            editTextBkAuthor.setText(sT.nextToken());
+            editTextBkDesc.setText(sT.nextToken());
+
+            double price = Double.parseDouble(sT.nextToken());
+            boolean priceBool = Boolean.parseBoolean(sT.nextToken());
+
+            editTextBkPrice.setText(priceBool ? String.valueOf(price + 100) : String.valueOf(price + 5));
+
+            Toast.makeText(context, message, Toast.LENGTH_LONG).show();
         }
     };
 
