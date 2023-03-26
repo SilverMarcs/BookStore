@@ -1,23 +1,31 @@
 package com.example.lab02;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Toast;
+import androidx.appcompat.widget.Toolbar;
+import androidx.drawerlayout.widget.DrawerLayout;
 
-import java.util.Arrays;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
+
+import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 public class MainActivity extends AppCompatActivity {
@@ -28,11 +36,18 @@ public class MainActivity extends AppCompatActivity {
     private EditText editTextBkAuthor;
     private EditText editTextBkDesc;
     private EditText editTextBkIsbn;
+    private Toolbar toolbar;
+    private FloatingActionButton fab;
+    private DrawerLayout drawerlayout;
+    private ListView listView;
+
+    private ArrayList<String> bookList = new ArrayList<>();
+    private ArrayAdapter<String> bookListAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.drawer);
 
         editTextBkId = findViewById(R.id.editTextBkId);
         editTextBkTitle = findViewById(R.id.editTextBkTitle);
@@ -40,13 +55,41 @@ public class MainActivity extends AppCompatActivity {
         editTextBkAuthor = findViewById(R.id.editTextBkAuthor);
         editTextBkDesc = findViewById(R.id.editTextBkDesc);
         editTextBkPrice = findViewById(R.id.editTextBkPrice);
+        listView = findViewById(R.id.book_list_view);
+        toolbar = findViewById(R.id.toolbar);
+        fab = findViewById(R.id.fab);
+        drawerlayout = findViewById(R.id.drawer_layout);
+
+
+        //Array Adapter
+        bookListAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, bookList);
+        listView.setAdapter(bookListAdapter);
+
+        // Toolbar
+        setSupportActionBar(toolbar);
+
+        // Floating Action Button (FAB)
+        fab.setOnClickListener(view -> addBook());
+
+        // Drawer Layout
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawerlayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerlayout.addDrawerListener(toggle);
+        toggle.syncState();
+
+        // Navigation View Drawer
+        NavigationView navigationView = findViewById(R.id.drawer_navigation_view);
+        navigationView.setNavigationItemSelectedListener(new DrawerNavigationListener());
+
 
         if (savedInstanceState == null) {
             this.loadBookData();
         }
 
+        // SMS Permissions
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS, Manifest.permission.RECEIVE_SMS, Manifest.permission.READ_SMS}, 0);
 
+        // SMS Receiver
         IntentFilter smsReceivedFilter = new IntentFilter(SMSReceiver.SMS_FILTER);
         registerReceiver(smsReceiver, smsReceivedFilter);
     }
@@ -72,23 +115,13 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    public void addBook(View view) {
-        saveBookData();
+    public void addBook() {
 
-        String toastMsg = "Book (" + editTextBkTitle.getText().toString() + ") added. Price: " + editTextBkPrice.getText().toString();
-        Toast addBookToast = Toast.makeText(this, toastMsg, Toast.LENGTH_SHORT);
-        addBookToast.show();
-    }
-
-    public void clearFields(View view) {
-        View[] allFields = new View[]{editTextBkId, editTextBkTitle, editTextBkPrice, editTextBkAuthor, editTextBkDesc, editTextBkIsbn};
-
-        for (View field : allFields) {
-            ((EditText) field).setText("");
+        if (editTextBkTitle.getText().toString().isEmpty() || editTextBkPrice.getText().toString().isEmpty()) {
+            Toast.makeText(this, "Please fill in title and price fields", Toast.LENGTH_SHORT).show();
+            return;
         }
-    }
 
-    private void saveBookData() {
         SharedPreferences myData = getPreferences(0);
         SharedPreferences.Editor myEditor = myData.edit();
         myEditor.putString("bkTitle", editTextBkTitle.getText().toString());
@@ -98,6 +131,21 @@ public class MainActivity extends AppCompatActivity {
         myEditor.putString("bkPrice", editTextBkPrice.getText().toString());
         myEditor.putString("bkId", editTextBkId.getText().toString());
         myEditor.commit();
+
+        bookList.add(editTextBkTitle.getText().toString() + " | " + editTextBkPrice.getText().toString());
+        bookListAdapter.notifyDataSetChanged();
+
+        String toastMsg = "Book (" + editTextBkTitle.getText().toString() + ") added. Price: " + editTextBkPrice.getText().toString();
+        Toast addBookToast = Toast.makeText(this, toastMsg, Toast.LENGTH_SHORT);
+        addBookToast.show();
+    }
+
+    public void clearFields() {
+        View[] allFields = new View[]{editTextBkId, editTextBkTitle, editTextBkPrice, editTextBkAuthor, editTextBkDesc, editTextBkIsbn};
+
+        for (View field : allFields) {
+            ((EditText) field).setText("");
+        }
     }
 
     private void loadBookData() {
@@ -110,7 +158,46 @@ public class MainActivity extends AppCompatActivity {
         editTextBkId.setText(myData.getString("bkId", ""));
     }
 
-    public void loadBookDataBtn(View view) {
-        this.loadBookData();
+    // drawer menu
+    class DrawerNavigationListener implements NavigationView.OnNavigationItemSelectedListener {
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            // get the id of the selected item
+            int id = item.getItemId();
+
+            if (id == R.id.add_book_drawer) {
+                addBook();
+            } else if (id == R.id.remove_last_drawer) {
+                bookList.remove(bookList.size() - 1);
+                bookListAdapter.notifyDataSetChanged();
+            } else if (id == R.id.remove_all_drawer) {
+                bookList.clear();
+                bookListAdapter.notifyDataSetChanged();
+            }
+            // close the drawer
+            drawerlayout.closeDrawers();
+            // tell the OS
+            return true;
+        }
+    }
+
+    // options menu
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.option_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.clear_fields_option) {
+            clearFields();
+        } else if (id == R.id.load_data_option) {
+            loadBookData();
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

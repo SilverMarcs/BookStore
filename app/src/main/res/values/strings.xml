@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">"Book Store App"</string>
+    <string name="navigation_drawer_open">"Drawer is now open"</string>
+    <string name="navigation_drawer_close">"Drawer is now close"</string>
 </resources>
