@@ -60,8 +60,7 @@ public class MainActivity extends AppCompatActivity {
         fab = findViewById(R.id.fab);
         drawerlayout = findViewById(R.id.drawer_layout);
 
-
-        //Array Adapter
+        // Array Adapter
         bookListAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, bookList);
         listView.setAdapter(bookListAdapter);
 
@@ -81,19 +80,61 @@ public class MainActivity extends AppCompatActivity {
         NavigationView navigationView = findViewById(R.id.drawer_navigation_view);
         navigationView.setNavigationItemSelectedListener(new DrawerNavigationListener());
 
+        // SMS Permissions
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS, Manifest.permission.RECEIVE_SMS, Manifest.permission.READ_SMS}, 0);
+        // SMS Receiver
+        IntentFilter smsReceivedFilter = new IntentFilter(SMSReceiver.SMS_FILTER);
+        registerReceiver(smsReceiver, smsReceivedFilter);
 
         if (savedInstanceState == null) {
             this.loadBookData();
         }
-
-        // SMS Permissions
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS, Manifest.permission.RECEIVE_SMS, Manifest.permission.READ_SMS}, 0);
-
-        // SMS Receiver
-        IntentFilter smsReceivedFilter = new IntentFilter(SMSReceiver.SMS_FILTER);
-        registerReceiver(smsReceiver, smsReceivedFilter);
     }
 
+    // drawer menu
+    class DrawerNavigationListener implements NavigationView.OnNavigationItemSelectedListener {
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            // get the id of the selected item
+            int id = item.getItemId();
+
+            if (id == R.id.add_book_drawer) {
+                addBook();
+            } else if (id == R.id.remove_last_drawer) {
+                bookList.remove(bookList.size() - 1);
+                bookListAdapter.notifyDataSetChanged();
+            } else if (id == R.id.remove_all_drawer) {
+                bookList.clear();
+                bookListAdapter.notifyDataSetChanged();
+            }
+            // close the drawer
+            drawerlayout.closeDrawers();
+            // tell the OS
+            return true;
+        }
+    }
+
+    // options menu
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.option_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.clear_fields_option) {
+            clearFields();
+        } else if (id == R.id.load_data_option) {
+            loadBookData();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    // SMS Receiver
     BroadcastReceiver smsReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -156,48 +197,5 @@ public class MainActivity extends AppCompatActivity {
         editTextBkDesc.setText(myData.getString("bkDesc", ""));
         editTextBkPrice.setText(myData.getString("bkPrice", ""));
         editTextBkId.setText(myData.getString("bkId", ""));
-    }
-
-    // drawer menu
-    class DrawerNavigationListener implements NavigationView.OnNavigationItemSelectedListener {
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            // get the id of the selected item
-            int id = item.getItemId();
-
-            if (id == R.id.add_book_drawer) {
-                addBook();
-            } else if (id == R.id.remove_last_drawer) {
-                bookList.remove(bookList.size() - 1);
-                bookListAdapter.notifyDataSetChanged();
-            } else if (id == R.id.remove_all_drawer) {
-                bookList.clear();
-                bookListAdapter.notifyDataSetChanged();
-            }
-            // close the drawer
-            drawerlayout.closeDrawers();
-            // tell the OS
-            return true;
-        }
-    }
-
-    // options menu
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.option_menu, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.clear_fields_option) {
-            clearFields();
-        } else if (id == R.id.load_data_option) {
-            loadBookData();
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 }
