@@ -172,17 +172,6 @@
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.09" />
 
-<!--    <Button-->
-<!--        android:id="@+id/button"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:onClick="addBook"-->
-<!--        android:text="Add Book"-->
-<!--        app:layout_constraintBaseline_toBaselineOf="@+id/button4"-->
-<!--        app:layout_constraintEnd_toStartOf="@+id/guideline5"-->
-<!--        app:layout_constraintHorizontal_bias="0.5"-->
-<!--        app:layout_constraintStart_toEndOf="@+id/button4" />-->
-
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline5"
         android:layout_width="wrap_content"
@@ -211,7 +200,8 @@
         android:layout_marginTop="24dp"
         app:layout_constraintEnd_toStartOf="@+id/guideline5"
         app:layout_constraintStart_toStartOf="@+id/guideline2"
-        app:layout_constraintTop_toTopOf="@+id/guideline11" />
+        app:layout_constraintTop_toTopOf="@+id/guideline11"
+        android:nestedScrollingEnabled="true"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

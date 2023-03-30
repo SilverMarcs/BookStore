@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
         registerReceiver(smsReceiver, smsReceivedFilter);
 
         if (savedInstanceState == null) {
-            this.loadBookData();
+            this.loadBook();
         }
     }
 
@@ -106,6 +106,8 @@ public class MainActivity extends AppCompatActivity {
             } else if (id == R.id.remove_all_drawer) {
                 bookList.clear();
                 bookListAdapter.notifyDataSetChanged();
+            } else if (id == R.id.close_app_drawer) {
+                finish();
             }
             // close the drawer
             drawerlayout.closeDrawers();
@@ -114,13 +116,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // options menu
+    // options menu inflater
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.option_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
+    // options menu id listener
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
@@ -128,7 +131,9 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.clear_fields_option) {
             clearFields();
         } else if (id == R.id.load_data_option) {
-            loadBookData();
+            loadBook();
+        } else if (id == R.id.total_books_option) {
+            Toast.makeText(getApplicationContext(), "Number of  books in store: " + bookList.size(), Toast.LENGTH_SHORT).show();
         }
 
         return super.onOptionsItemSelected(item);
@@ -189,7 +194,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void loadBookData() {
+    private void loadBook() {
         SharedPreferences myData = getPreferences(0);
         editTextBkTitle.setText(myData.getString("bkTitle", ""));
         editTextBkIsbn.setText(myData.getString("bkIsbn", ""));
