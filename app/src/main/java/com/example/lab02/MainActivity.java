@@ -176,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
         myEditor.putString("bkDesc", editTextBkDesc.getText().toString());
         myEditor.putString("bkPrice", editTextBkPrice.getText().toString());
         myEditor.putString("bkId", editTextBkId.getText().toString());
-        myEditor.commit();
+        myEditor.apply();
 
         bookList.add(editTextBkTitle.getText().toString() + " | " + editTextBkPrice.getText().toString());
         bookListAdapter.notifyDataSetChanged();
