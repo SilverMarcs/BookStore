@@ -15,12 +15,13 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
@@ -41,8 +42,10 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout drawerlayout;
     private ListView listView;
 
-    private ArrayList<String> bookList = new ArrayList<>();
-    private ArrayAdapter<String> bookListAdapter;
+    private ArrayList<Book> bookList = new ArrayList<>();
+    private RecyclerView recyclerView;
+    private RecyclerView.LayoutManager layoutManager;
+    private BookRecyclerAdapter bookRecyclerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,14 +58,19 @@ public class MainActivity extends AppCompatActivity {
         editTextBkAuthor = findViewById(R.id.editTextBkAuthor);
         editTextBkDesc = findViewById(R.id.editTextBkDesc);
         editTextBkPrice = findViewById(R.id.editTextBkPrice);
-        listView = findViewById(R.id.book_list_view);
         toolbar = findViewById(R.id.toolbar);
         fab = findViewById(R.id.fab);
         drawerlayout = findViewById(R.id.drawer_layout);
 
-        // Array Adapter
-        bookListAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, bookList);
-        listView.setAdapter(bookListAdapter);
+        // Recycle Adapter
+        recyclerView = findViewById(R.id.bookRecyclerView);
+
+        layoutManager = new LinearLayoutManager(this);  //A RecyclerView.LayoutManager implementation which provides similar functionality to ListView.
+        recyclerView.setLayoutManager(layoutManager);   // Also StaggeredGridLayoutManager and GridLayoutManager or a custom Layout manager
+
+        bookRecyclerAdapter = new BookRecyclerAdapter();
+        bookRecyclerAdapter.setData(bookList);
+        recyclerView.setAdapter(bookRecyclerAdapter);
 
         // Toolbar
         setSupportActionBar(toolbar);
@@ -102,10 +110,10 @@ public class MainActivity extends AppCompatActivity {
                 addBook();
             } else if (id == R.id.remove_last_drawer) {
                 bookList.remove(bookList.size() - 1);
-                bookListAdapter.notifyDataSetChanged();
+                bookRecyclerAdapter.notifyDataSetChanged();
             } else if (id == R.id.remove_all_drawer) {
                 bookList.clear();
-                bookListAdapter.notifyDataSetChanged();
+                bookRecyclerAdapter.notifyDataSetChanged();
             } else if (id == R.id.close_app_drawer) {
                 finish();
             }
@@ -168,18 +176,25 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
+        String bookId = editTextBkId.getText().toString();
+        String bookTitle = editTextBkTitle.getText().toString();
+        String bookIsbn = editTextBkIsbn.getText().toString();
+        String bookAuthor = editTextBkAuthor.getText().toString();
+        String bookDesc = editTextBkDesc.getText().toString();
+        String bookPrice = editTextBkPrice.getText().toString();
+
         SharedPreferences myData = getPreferences(0);
         SharedPreferences.Editor myEditor = myData.edit();
-        myEditor.putString("bkTitle", editTextBkTitle.getText().toString());
-        myEditor.putString("bkIsbn", editTextBkIsbn.getText().toString());
-        myEditor.putString("bkAuthor", editTextBkAuthor.getText().toString());
-        myEditor.putString("bkDesc", editTextBkDesc.getText().toString());
-        myEditor.putString("bkPrice", editTextBkPrice.getText().toString());
-        myEditor.putString("bkId", editTextBkId.getText().toString());
+        myEditor.putString("bkId", bookId);
+        myEditor.putString("bkTitle", bookTitle);
+        myEditor.putString("bkIsbn", bookIsbn);
+        myEditor.putString("bkAuthor", bookAuthor);
+        myEditor.putString("bkDesc", bookDesc);
+        myEditor.putString("bkPrice", bookPrice);
         myEditor.apply();
 
-        bookList.add(editTextBkTitle.getText().toString() + " | " + editTextBkPrice.getText().toString());
-        bookListAdapter.notifyDataSetChanged();
+        bookList.add(new Book(bookId, bookTitle, bookIsbn, bookAuthor, bookDesc, bookPrice));
+        bookRecyclerAdapter.notifyDataSetChanged();
 
         String toastMsg = "Book (" + editTextBkTitle.getText().toString() + ") added. Price: " + editTextBkPrice.getText().toString();
         Toast addBookToast = Toast.makeText(this, toastMsg, Toast.LENGTH_SHORT);

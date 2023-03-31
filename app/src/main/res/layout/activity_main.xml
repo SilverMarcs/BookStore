@@ -193,15 +193,17 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_begin="360dp" />
 
-    <ListView
-        android:id="@+id/book_list_view"
-        android:layout_width="329dp"
-        android:layout_height="362dp"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/bookRecyclerView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_marginTop="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/guideline5"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/guideline2"
         app:layout_constraintTop_toTopOf="@+id/guideline11"
-        android:nestedScrollingEnabled="true"/>
+        app:layout_constraintVertical_bias="0.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 
