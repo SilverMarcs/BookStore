@@ -40,7 +40,6 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private FloatingActionButton fab;
     private DrawerLayout drawerlayout;
-    private ListView listView;
 
     private ArrayList<Book> bookList = new ArrayList<>();
     private RecyclerView recyclerView;
