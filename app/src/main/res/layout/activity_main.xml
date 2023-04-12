@@ -136,33 +136,6 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="spread_inside"
         app:layout_constraintStart_toStartOf="@+id/guideline2"
-        app:layout_constraintTop_toBottomOf="@+id/textViewBkId" />
-
-    <EditText
-        android:id="@+id/editTextBkId"
-        android:layout_width="186dp"
-        android:layout_height="46dp"
-        android:ems="10"
-        android:hint="Enter Book ID"
-        android:inputType="text"
-        android:textSize="16sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/textViewBkId"
-        app:layout_constraintEnd_toStartOf="@+id/guideline5"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/textViewBkId" />
-
-    <TextView
-        android:id="@+id/textViewBkId"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:text="Book ID"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/editTextBkId"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_chainStyle="spread_inside"
-        app:layout_constraintStart_toStartOf="@+id/guideline2"
         app:layout_constraintTop_toTopOf="@+id/guideline6" />
 
     <androidx.constraintlayout.widget.Guideline

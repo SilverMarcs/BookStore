@@ -32,7 +32,6 @@ import java.util.StringTokenizer;
 public class MainActivity extends AppCompatActivity {
 
     private EditText editTextBkTitle;
-    private EditText editTextBkId;
     private EditText editTextBkPrice;
     private EditText editTextBkAuthor;
     private EditText editTextBkDesc;
@@ -51,7 +50,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.drawer);
 
-        editTextBkId = findViewById(R.id.editTextBkId);
         editTextBkTitle = findViewById(R.id.editTextBkTitle);
         editTextBkIsbn = findViewById(R.id.editTextBkIsbn);
         editTextBkAuthor = findViewById(R.id.editTextBkAuthor);
@@ -153,7 +151,6 @@ public class MainActivity extends AppCompatActivity {
             String message = intent.getStringExtra(SMSReceiver.SMS_MSG_KEY);
             StringTokenizer sT = new StringTokenizer(message, "|");
 
-            editTextBkId.setText(sT.nextToken());
             editTextBkTitle.setText(sT.nextToken());
             editTextBkIsbn.setText(sT.nextToken());
             editTextBkAuthor.setText(sT.nextToken());
@@ -175,7 +172,6 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        String bookId = editTextBkId.getText().toString();
         String bookTitle = editTextBkTitle.getText().toString();
         String bookIsbn = editTextBkIsbn.getText().toString();
         String bookAuthor = editTextBkAuthor.getText().toString();
@@ -184,7 +180,6 @@ public class MainActivity extends AppCompatActivity {
 
         SharedPreferences myData = getPreferences(0);
         SharedPreferences.Editor myEditor = myData.edit();
-        myEditor.putString("bkId", bookId);
         myEditor.putString("bkTitle", bookTitle);
         myEditor.putString("bkIsbn", bookIsbn);
         myEditor.putString("bkAuthor", bookAuthor);
@@ -192,7 +187,7 @@ public class MainActivity extends AppCompatActivity {
         myEditor.putString("bkPrice", bookPrice);
         myEditor.apply();
 
-        bookList.add(new Book(bookId, bookTitle, bookIsbn, bookAuthor, bookDesc, bookPrice));
+        bookList.add(new Book(bookTitle, bookIsbn, bookAuthor, bookDesc, bookPrice));
         bookRecyclerAdapter.notifyDataSetChanged();
 
         String toastMsg = "Book (" + editTextBkTitle.getText().toString() + ") added. Price: " + editTextBkPrice.getText().toString();
@@ -201,7 +196,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void clearFields() {
-        View[] allFields = new View[]{editTextBkId, editTextBkTitle, editTextBkPrice, editTextBkAuthor, editTextBkDesc, editTextBkIsbn};
+        View[] allFields = new View[]{editTextBkTitle, editTextBkPrice, editTextBkAuthor, editTextBkDesc, editTextBkIsbn};
 
         for (View field : allFields) {
             ((EditText) field).setText("");
@@ -215,6 +210,5 @@ public class MainActivity extends AppCompatActivity {
         editTextBkAuthor.setText(myData.getString("bkAuthor", ""));
         editTextBkDesc.setText(myData.getString("bkDesc", ""));
         editTextBkPrice.setText(myData.getString("bkPrice", ""));
-        editTextBkId.setText(myData.getString("bkId", ""));
     }
 }

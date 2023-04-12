@@ -1,5 +1,6 @@
 package com.example.lab02;
 
+
 public class Book {
     private String id;
     private String title;
@@ -8,8 +9,8 @@ public class Book {
     private String description;
     private String price;
 
-    public Book(String id, String title, String author, String isbn, String description, String price) {
-        this.id = id;
+    public Book(String title, String author, String isbn, String description, String price) {
+        this.id = ((int)(Math.random() * 100) + 1) + "";
         this.title = title;
         this.author = author;
         this.isbn = isbn;
