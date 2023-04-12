@@ -27,6 +27,10 @@ public class BookViewModel extends AndroidViewModel {
         mRepository.insert(book);
     }
 
+    public void deleteLastBook(){
+        mRepository.deleteLastBook();
+    }
+
     public int getBookCount() {
         return mRepository.getBookCount();
     }

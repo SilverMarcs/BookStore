@@ -30,6 +30,12 @@ public class BookRepository {
         return mBookDao.getBookCount();
     }
 
+    void deleteLastBook(){
+        BookDatabase.databaseWriteExecutor.execute(()->{
+            mBookDao.deleteLastBook();
+        });
+    }
+
     void deleteAll(){
         BookDatabase.databaseWriteExecutor.execute(()->{
             mBookDao.deleteAllBooks();

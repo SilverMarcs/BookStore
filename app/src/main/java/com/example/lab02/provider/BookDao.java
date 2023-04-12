@@ -18,10 +18,13 @@ public interface BookDao {
     @Query("select count(*) from books")
     int getBookCount();
 
+    @Query("delete from books where bookTitle= (select bookTitle from books order by bookID desc limit 1)")
+    void deleteLastBook();
+
     @Insert
     void addBook(Book book);
 
-    @Query("delete from books where bookTitle= :name")
+    @Query("delete from books where bookTitle=:name")
     void deleteBook(String name);
 
     @Query("delete FROM books")
