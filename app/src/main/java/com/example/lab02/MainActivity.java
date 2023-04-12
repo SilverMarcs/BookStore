@@ -19,11 +19,13 @@ import android.widget.EditText;
 import android.widget.Toast;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.lab02.provider.Book;
 import com.example.lab02.provider.BookRecyclerViewAdapter;
+import com.example.lab02.provider.BookViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
@@ -40,11 +42,11 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private FloatingActionButton fab;
     private DrawerLayout drawerlayout;
-
-    private ArrayList<Book> bookList = new ArrayList<>();
+//    private ArrayList<Book> bookList = new ArrayList<>();
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
     private BookRecyclerViewAdapter bookRecyclerViewAdapter;
+    private BookViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,20 +63,28 @@ public class MainActivity extends AppCompatActivity {
         drawerlayout = findViewById(R.id.drawer_layout);
 
         // Recycle Adapter
-        recyclerView = findViewById(R.id.bookRecyclerView);
+//        recyclerView = findViewById(R.id.book_recycler);
+//
+//        layoutManager = new LinearLayoutManager(this);  //A RecyclerView.LayoutManager implementation which provides similar functionality to ListView.
+//        recyclerView.setLayoutManager(layoutManager);   // Also StaggeredGridLayoutManager and GridLayoutManager or a custom Layout manager
+//
+//        bookRecyclerViewAdapter = new BookRecyclerViewAdapter();
+//        bookRecyclerViewAdapter.setData(bookList);
+//        recyclerView.setAdapter(bookRecyclerViewAdapter);
 
-        layoutManager = new LinearLayoutManager(this);  //A RecyclerView.LayoutManager implementation which provides similar functionality to ListView.
-        recyclerView.setLayoutManager(layoutManager);   // Also StaggeredGridLayoutManager and GridLayoutManager or a custom Layout manager
-
-        bookRecyclerViewAdapter = new BookRecyclerViewAdapter();
-        bookRecyclerViewAdapter.setData(bookList);
-        recyclerView.setAdapter(bookRecyclerViewAdapter);
+        // ViewModel
+        viewModel = new ViewModelProvider(this).get(BookViewModel.class);
 
         // Toolbar
         setSupportActionBar(toolbar);
 
         // Floating Action Button (FAB)
-        fab.setOnClickListener(view -> addBook());
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addBook();
+            }
+        });
 
         // Drawer Layout
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -92,9 +102,13 @@ public class MainActivity extends AppCompatActivity {
         IntentFilter smsReceivedFilter = new IntentFilter(SMSReceiver.SMS_FILTER);
         registerReceiver(smsReceiver, smsReceivedFilter);
 
-        if (savedInstanceState == null) {
-            this.loadBook();
-        }
+        displayBookRecyclerFragment();
+    }
+
+    private void displayBookRecyclerFragment() {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, new BookRecyclerFragment())
+                .commit();
     }
 
     // drawer menu
@@ -107,11 +121,13 @@ public class MainActivity extends AppCompatActivity {
             if (id == R.id.add_book_drawer) {
                 addBook();
             } else if (id == R.id.remove_last_drawer) {
-                bookList.remove(bookList.size() - 1);
-                bookRecyclerViewAdapter.notifyDataSetChanged();
+                viewModel.deleteLastBook();
             } else if (id == R.id.remove_all_drawer) {
-                bookList.clear();
-                bookRecyclerViewAdapter.notifyDataSetChanged();
+                // TODO: check
+                viewModel.deleteAll();
+            } else if (id == R.id.list_all_drawer) {
+                Intent intent = new Intent(MainActivity.this, BookListActivity.class);
+                startActivity(intent);
             } else if (id == R.id.close_app_drawer) {
                 finish();
             }
@@ -136,10 +152,12 @@ public class MainActivity extends AppCompatActivity {
 
         if (id == R.id.clear_fields_option) {
             clearFields();
-        } else if (id == R.id.load_data_option) {
-            loadBook();
-        } else if (id == R.id.total_books_option) {
-            Toast.makeText(getApplicationContext(), "Number of  books in store: " + bookList.size(), Toast.LENGTH_SHORT).show();
+        }
+//        else if (id == R.id.load_data_option) {
+//            loadBook();
+//        }
+        else if (id == R.id.total_books_option) {
+            Toast.makeText(this, "Implement async operation", Toast.LENGTH_SHORT).show();
         }
 
         return super.onOptionsItemSelected(item);
@@ -168,28 +186,14 @@ public class MainActivity extends AppCompatActivity {
 
     public void addBook() {
 
-        if (editTextBkTitle.getText().toString().isEmpty() || editTextBkPrice.getText().toString().isEmpty()) {
-            Toast.makeText(this, "Please fill in title and price fields", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
         String bookTitle = editTextBkTitle.getText().toString();
         String bookIsbn = editTextBkIsbn.getText().toString();
         String bookAuthor = editTextBkAuthor.getText().toString();
         String bookDesc = editTextBkDesc.getText().toString();
         String bookPrice = editTextBkPrice.getText().toString();
 
-        SharedPreferences myData = getPreferences(0);
-        SharedPreferences.Editor myEditor = myData.edit();
-        myEditor.putString("bkTitle", bookTitle);
-        myEditor.putString("bkIsbn", bookIsbn);
-        myEditor.putString("bkAuthor", bookAuthor);
-        myEditor.putString("bkDesc", bookDesc);
-        myEditor.putString("bkPrice", bookPrice);
-        myEditor.apply();
-
-        bookList.add(new Book(bookTitle, bookIsbn, bookAuthor, bookDesc, bookPrice));
-        bookRecyclerViewAdapter.notifyDataSetChanged();
+        Book book = new Book(bookTitle, bookIsbn, bookAuthor, bookDesc, bookPrice);
+        viewModel.insert(book);
 
         String toastMsg = "Book (" + editTextBkTitle.getText().toString() + ") added. Price: " + editTextBkPrice.getText().toString();
         Toast addBookToast = Toast.makeText(this, toastMsg, Toast.LENGTH_SHORT);
@@ -202,14 +206,5 @@ public class MainActivity extends AppCompatActivity {
         for (View field : allFields) {
             ((EditText) field).setText("");
         }
-    }
-
-    private void loadBook() {
-        SharedPreferences myData = getPreferences(0);
-        editTextBkTitle.setText(myData.getString("bkTitle", ""));
-        editTextBkIsbn.setText(myData.getString("bkIsbn", ""));
-        editTextBkAuthor.setText(myData.getString("bkAuthor", ""));
-        editTextBkDesc.setText(myData.getString("bkDesc", ""));
-        editTextBkPrice.setText(myData.getString("bkPrice", ""));
     }
 }

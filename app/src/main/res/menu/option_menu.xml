@@ -4,9 +4,9 @@
     <item
         android:id="@+id/clear_fields_option"
         android:title="Clear Fields" />
-    <item
-        android:id="@+id/load_data_option"
-        android:title="Load Data" />
+<!--    <item-->
+<!--        android:id="@+id/load_data_option"-->
+<!--        android:title="Load Data" />-->
     <item
         android:id="@+id/total_books_option"
         android:title="Total Books" />

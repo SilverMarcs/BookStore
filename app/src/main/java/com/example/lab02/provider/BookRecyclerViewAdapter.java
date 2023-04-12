@@ -1,5 +1,6 @@
 package com.example.lab02.provider;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,23 +12,29 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.lab02.R;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class BookRecyclerViewAdapter extends RecyclerView.Adapter<BookRecyclerViewAdapter.BookViewHolder>{
 
-    ArrayList<Book> bookList = new ArrayList<Book>();
+    List<Book> bookList;
 
-    public void setData(ArrayList<Book> data) {
+    public BookRecyclerViewAdapter() {
+        this.bookList = new ArrayList<>();
+    }
+
+    public void setData(List<Book> data) {
         this.bookList = data;
+        notifyDataSetChanged();
     }
 
     @NonNull
     @Override
     public BookViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View cardView = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_view, parent, false); //CardView inflated as RecyclerView list item
-        BookViewHolder bookViewHolder = new BookViewHolder(cardView);
-        return bookViewHolder;
+        return new BookViewHolder(cardView);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull BookViewHolder holder, int position) {
         holder.bkCardId.setText("ID: " + bookList.get(position).getId());

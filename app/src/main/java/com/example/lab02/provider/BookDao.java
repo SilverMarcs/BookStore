@@ -15,10 +15,10 @@ public interface BookDao {
     @Query("select * from books where bookTitle=:name")
     List<Book> getBook(String name);
 
-    @Query("select count(*) from books")
+    @Query("SELECT COUNT(*) FROM books")
     int getBookCount();
 
-    @Query("delete from books where bookTitle= (select bookTitle from books order by bookID desc limit 1)")
+    @Query("DELETE FROM books WHERE bookID = (SELECT max(bookID) FROM books);")
     void deleteLastBook();
 
     @Insert
