@@ -16,13 +16,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.Toast;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.lab02.provider.Book;
+import com.example.lab02.provider.BookRecyclerViewAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
@@ -43,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Book> bookList = new ArrayList<>();
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
-    private BookRecyclerAdapter bookRecyclerAdapter;
+    private BookRecyclerViewAdapter bookRecyclerViewAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,9 +66,9 @@ public class MainActivity extends AppCompatActivity {
         layoutManager = new LinearLayoutManager(this);  //A RecyclerView.LayoutManager implementation which provides similar functionality to ListView.
         recyclerView.setLayoutManager(layoutManager);   // Also StaggeredGridLayoutManager and GridLayoutManager or a custom Layout manager
 
-        bookRecyclerAdapter = new BookRecyclerAdapter();
-        bookRecyclerAdapter.setData(bookList);
-        recyclerView.setAdapter(bookRecyclerAdapter);
+        bookRecyclerViewAdapter = new BookRecyclerViewAdapter();
+        bookRecyclerViewAdapter.setData(bookList);
+        recyclerView.setAdapter(bookRecyclerViewAdapter);
 
         // Toolbar
         setSupportActionBar(toolbar);
@@ -107,10 +108,10 @@ public class MainActivity extends AppCompatActivity {
                 addBook();
             } else if (id == R.id.remove_last_drawer) {
                 bookList.remove(bookList.size() - 1);
-                bookRecyclerAdapter.notifyDataSetChanged();
+                bookRecyclerViewAdapter.notifyDataSetChanged();
             } else if (id == R.id.remove_all_drawer) {
                 bookList.clear();
-                bookRecyclerAdapter.notifyDataSetChanged();
+                bookRecyclerViewAdapter.notifyDataSetChanged();
             } else if (id == R.id.close_app_drawer) {
                 finish();
             }
@@ -188,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
         myEditor.apply();
 
         bookList.add(new Book(bookTitle, bookIsbn, bookAuthor, bookDesc, bookPrice));
-        bookRecyclerAdapter.notifyDataSetChanged();
+        bookRecyclerViewAdapter.notifyDataSetChanged();
 
         String toastMsg = "Book (" + editTextBkTitle.getText().toString() + ") added. Price: " + editTextBkPrice.getText().toString();
         Toast addBookToast = Toast.makeText(this, toastMsg, Toast.LENGTH_SHORT);

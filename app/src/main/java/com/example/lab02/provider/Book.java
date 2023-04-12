@@ -1,16 +1,34 @@
-package com.example.lab02;
+package com.example.lab02.provider;
 
+import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
+@Entity(tableName = "books")
 public class Book {
-    private String id;
+    @PrimaryKey(autoGenerate = true)
+    @NonNull
+    @ColumnInfo(name = "bookID")
+    private Integer id;
+
+    @ColumnInfo(name = "bookTitle")
     private String title;
+
+    @ColumnInfo(name = "bookAuthor")
     private String author;
+
+    @ColumnInfo(name = "bookIsbn")
     private String isbn;
+
+    @ColumnInfo(name = "bookDescription")
     private String description;
+
+    @ColumnInfo(name = "bookPrice")
     private String price;
 
     public Book(String title, String author, String isbn, String description, String price) {
-        this.id = ((int)(Math.random() * 100) + 1) + "";
+        this.id = ((int)(Math.random() * 100) + 1);
         this.title = title;
         this.author = author;
         this.isbn = isbn;
@@ -18,11 +36,11 @@ public class Book {
         this.price = price;
     }
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(@NonNull Integer id) {
         this.id = id;
     }
 

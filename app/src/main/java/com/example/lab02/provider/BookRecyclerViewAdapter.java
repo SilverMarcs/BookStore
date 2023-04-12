@@ -1,4 +1,4 @@
-package com.example.lab02;
+package com.example.lab02.provider;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,9 +8,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.lab02.R;
+
 import java.util.ArrayList;
 
-public class BookRecyclerAdapter extends RecyclerView.Adapter<BookRecyclerAdapter.BookViewHolder>{
+public class BookRecyclerViewAdapter extends RecyclerView.Adapter<BookRecyclerViewAdapter.BookViewHolder>{
 
     ArrayList<Book> bookList = new ArrayList<Book>();
 
