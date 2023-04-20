@@ -21,6 +21,9 @@ public interface BookDao {
     @Query("DELETE FROM books WHERE bookID = (SELECT max(bookID) FROM books);")
     void deleteLastBook();
 
+    @Query("DELETE FROM books where bookPrice > 50")
+    void deleteExpensiveBooks();
+
     @Insert
     void addBook(Book book);
 

@@ -10,4 +10,8 @@
     <item
         android:id="@+id/total_books_option"
         android:title="Total Books" />
+
+    <item
+        android:id="@+id/delete_expensive_option"
+        android:title="Delete Expensive Books" />
 </menu>

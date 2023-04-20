@@ -31,6 +31,10 @@ public class BookViewModel extends AndroidViewModel {
         mRepository.deleteLastBook();
     }
 
+    public void deleteExpensiveBooks(){
+        mRepository.deleteExpensiveBooks();
+    }
+
     public int getBookCount() {
         return mRepository.getBookCount();
     }

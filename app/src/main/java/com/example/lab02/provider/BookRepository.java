@@ -36,6 +36,12 @@ public class BookRepository {
         });
     }
 
+    void deleteExpensiveBooks(){
+        BookDatabase.databaseWriteExecutor.execute(()->{
+            mBookDao.deleteExpensiveBooks();
+        });
+    }
+
     void deleteAll(){
         BookDatabase.databaseWriteExecutor.execute(()->{
             mBookDao.deleteAllBooks();

@@ -159,6 +159,9 @@ public class MainActivity extends AppCompatActivity {
         else if (id == R.id.total_books_option) {
             Toast.makeText(this, "Implement async operation", Toast.LENGTH_SHORT).show();
         }
+        else if (id == R.id.delete_expensive_option) {
+            viewModel.deleteExpensiveBooks();
+        }
 
         return super.onOptionsItemSelected(item);
     }
