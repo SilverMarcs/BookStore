@@ -1,6 +1,7 @@
 package com.example.lab02;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -22,10 +23,15 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.lab02.provider.Book;
-import com.example.lab02.provider.BookRecyclerViewAdapter;
 import com.example.lab02.provider.BookViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.ktx.Firebase;
 
 import java.util.StringTokenizer;
 
@@ -44,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager layoutManager;
     private BookRecyclerViewAdapter bookRecyclerViewAdapter;
     private BookViewModel viewModel;
+    public DatabaseReference dbRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,16 +65,6 @@ public class MainActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
         fab = findViewById(R.id.fab);
         drawerlayout = findViewById(R.id.drawer_layout);
-
-        // Recycle Adapter
-//        recyclerView = findViewById(R.id.book_recycler);
-//
-//        layoutManager = new LinearLayoutManager(this);  //A RecyclerView.LayoutManager implementation which provides similar functionality to ListView.
-//        recyclerView.setLayoutManager(layoutManager);   // Also StaggeredGridLayoutManager and GridLayoutManager or a custom Layout manager
-//
-//        bookRecyclerViewAdapter = new BookRecyclerViewAdapter();
-//        bookRecyclerViewAdapter.setData(bookList);
-//        recyclerView.setAdapter(bookRecyclerViewAdapter);
 
         // ViewModel
         viewModel = new ViewModelProvider(this).get(BookViewModel.class);
@@ -99,6 +96,36 @@ public class MainActivity extends AppCompatActivity {
         IntentFilter smsReceivedFilter = new IntentFilter(SMSReceiver.SMS_FILTER);
         registerReceiver(smsReceiver, smsReceivedFilter);
 
+        FirebaseDatabase fbDB = FirebaseDatabase.getInstance();
+        dbRef = fbDB.getReference("Book/info");
+
+        dbRef.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                Toast.makeText(getApplicationContext() , "Book added to Firebase", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+                Toast.makeText(getApplicationContext() , "Book deleted from Firebase", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
         displayBookRecyclerFragment();
     }
 
@@ -120,8 +147,8 @@ public class MainActivity extends AppCompatActivity {
             } else if (id == R.id.remove_last_drawer) {
                 viewModel.deleteLastBook();
             } else if (id == R.id.remove_all_drawer) {
-                // TODO: check
-                viewModel.deleteAll();
+                deleteAll();
+                dbRef.removeValue();
             } else if (id == R.id.list_all_drawer) {
                 Intent intent = new Intent(MainActivity.this, BookListActivity.class);
                 startActivity(intent);
@@ -194,10 +221,15 @@ public class MainActivity extends AppCompatActivity {
 
         Book book = new Book(bookTitle, bookIsbn, bookAuthor, bookDesc, Double.parseDouble(bookPrice));
         viewModel.insert(book);
+        dbRef.push().setValue(book);
 
         String toastMsg = "Book (" + editTextBkTitle.getText().toString() + ") added. Price: " + editTextBkPrice.getText().toString();
         Toast addBookToast = Toast.makeText(this, toastMsg, Toast.LENGTH_SHORT);
         addBookToast.show();
+    }
+
+    public void deleteAll() {
+        viewModel.deleteAll();
     }
 
     public void clearFields() {

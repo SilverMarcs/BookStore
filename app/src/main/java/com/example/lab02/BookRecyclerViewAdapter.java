@@ -1,4 +1,4 @@
-package com.example.lab02.provider;
+package com.example.lab02;
 
 import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
@@ -9,7 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.lab02.R;
+import com.example.lab02.provider.Book;
 
 import java.util.ArrayList;
 import java.util.List;
