@@ -25,10 +25,10 @@ public class Book {
     private String description;
 
     @ColumnInfo(name = "bookPrice")
-    private String price;
+    private double price;
 
-    public Book(String title, String author, String isbn, String description, String price) {
-        this.id = ((int)(Math.random() * 100) + 1);
+    public Book(String title, String author, String isbn, String description, double price) {
+//        this.id = ((int)(Math.random() * 100) + 1);
         this.title = title;
         this.author = author;
         this.isbn = isbn;
@@ -76,11 +76,11 @@ public class Book {
         this.description = description;
     }
 
-    public String getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 }

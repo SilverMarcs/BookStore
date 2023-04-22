@@ -10,7 +10,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,7 +19,6 @@ import android.widget.Toast;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.lab02.provider.Book;
@@ -29,7 +27,6 @@ import com.example.lab02.provider.BookViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
-import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 public class MainActivity extends AppCompatActivity {
@@ -195,7 +192,7 @@ public class MainActivity extends AppCompatActivity {
         String bookDesc = editTextBkDesc.getText().toString();
         String bookPrice = editTextBkPrice.getText().toString();
 
-        Book book = new Book(bookTitle, bookIsbn, bookAuthor, bookDesc, bookPrice);
+        Book book = new Book(bookTitle, bookIsbn, bookAuthor, bookDesc, Double.parseDouble(bookPrice));
         viewModel.insert(book);
 
         String toastMsg = "Book (" + editTextBkTitle.getText().toString() + ") added. Price: " + editTextBkPrice.getText().toString();
