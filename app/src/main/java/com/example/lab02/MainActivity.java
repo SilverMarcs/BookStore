@@ -219,7 +219,7 @@ public class MainActivity extends AppCompatActivity {
         String bookDesc = editTextBkDesc.getText().toString();
         String bookPrice = editTextBkPrice.getText().toString();
 
-        Book book = new Book(bookTitle, bookIsbn, bookAuthor, bookDesc, Double.parseDouble(bookPrice));
+        Book book = new Book(bookTitle, bookAuthor, bookIsbn, bookDesc, Double.parseDouble(bookPrice));
         viewModel.insert(book);
         dbRef.push().setValue(book);
 
