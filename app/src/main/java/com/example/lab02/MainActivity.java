@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     private BookViewModel viewModel;
     public DatabaseReference dbRef;
     private View frameLayout;
-    private int inital_x, initial_y;
+    private int initial_x, initial_y;
     private int MAX_DISTANCE = 60;
 
     @Override
@@ -87,26 +87,31 @@ public class MainActivity extends AppCompatActivity {
 
                 switch (action) {
                     case MotionEvent.ACTION_DOWN: {
-                        inital_x = (int)motionEvent.getX();
+                        initial_x = (int)motionEvent.getX();
                         initial_y = (int)motionEvent.getY();
                         return true;
                     }
                     case MotionEvent.ACTION_UP: {
                         int final_x = (int)motionEvent.getX();
                         int final_y = (int)motionEvent.getY();
+                        // horizontal
                         if (Math.abs(initial_y - final_y) < MAX_DISTANCE) {
                             // left to right
-                            if (inital_x < final_x) {
+                            if (initial_x < final_x) {
                                 String valueStr = editTextBkPrice.getText().toString();
                                 float value = Float.parseFloat(valueStr);
                                 editTextBkPrice.setText(String.valueOf(value + 1));
                             }
                             // right to left
-                            else if (final_x < inital_x){
+                            else if (final_x < initial_x){
                                 addBook();
                             }
-                        } else if (final_y < initial_y) {
-                            clearFields();
+                        // vertical
+                        } else if (Math.abs(initial_x - final_x) < MAX_DISTANCE) {
+                            // bottom to top
+                            if (final_y < initial_y) {
+                                clearFields();
+                            };
                         }
                         return true;
                     }
