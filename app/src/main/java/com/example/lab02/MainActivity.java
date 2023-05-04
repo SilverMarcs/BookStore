@@ -14,13 +14,13 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.lab02.provider.Book;
 import com.example.lab02.provider.BookViewModel;
@@ -31,7 +31,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.ktx.Firebase;
 
 import java.util.StringTokenizer;
 
@@ -45,12 +44,11 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private FloatingActionButton fab;
     private DrawerLayout drawerlayout;
-//    private ArrayList<Book> bookList = new ArrayList<>();
-    private RecyclerView recyclerView;
-    private RecyclerView.LayoutManager layoutManager;
-    private BookRecyclerViewAdapter bookRecyclerViewAdapter;
     private BookViewModel viewModel;
     public DatabaseReference dbRef;
+    private View frameLayout;
+    private int inital_x, initial_y;
+    private int MAX_DISTANCE = 60;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
         fab = findViewById(R.id.fab);
         drawerlayout = findViewById(R.id.drawer_layout);
+        frameLayout = findViewById(R.id.frame_id);
 
         // ViewModel
         viewModel = new ViewModelProvider(this).get(BookViewModel.class);
@@ -79,6 +78,49 @@ public class MainActivity extends AppCompatActivity {
                 addBook();
             }
         });
+
+        // gesture on Frame layout
+        frameLayout.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                int action = motionEvent.getActionMasked();
+
+                switch (action) {
+                    case MotionEvent.ACTION_DOWN: {
+                        inital_x = (int)motionEvent.getX();
+                        initial_y = (int)motionEvent.getY();
+                        return true;
+                    }
+                    case MotionEvent.ACTION_UP: {
+                        int final_x = (int)motionEvent.getX();
+                        int final_y = (int)motionEvent.getY();
+                        if (Math.abs(initial_y - final_y) < MAX_DISTANCE) {
+                            // left to right
+                            if (inital_x < final_x) {
+                                String valueStr = editTextBkPrice.getText().toString();
+                                float value = Float.parseFloat(valueStr);
+                                editTextBkPrice.setText(String.valueOf(value + 1));
+                            }
+                            // right to left
+                            else if (final_x < inital_x){
+                                addBook();
+                            }
+                        } else if (final_y < initial_y) {
+                            clearFields();
+                        }
+                        return true;
+                    }
+                    case MotionEvent.ACTION_MOVE: {
+                        return true;
+                    }
+
+                    default:
+                        return false;
+                }
+
+            }
+        });
+
 
         // Drawer Layout
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -102,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
         dbRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                Toast.makeText(getApplicationContext() , "Book added to Firebase", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext() , "Book added to Firebase", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -112,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-                Toast.makeText(getApplicationContext() , "Book deleted from Firebase", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext() , "Book deleted from Firebase", Toast.LENGTH_SHORT).show();
             }
 
             @Override
