@@ -103,14 +103,8 @@ public class MainActivity extends AppCompatActivity {
                         }
 
                         if (Math.abs(initial_y - final_y) < MAX_DISTANCE) {
-                            // left to right
-                            if (initial_x < final_x) {
-                                String valueStr = editTextBkPrice.getText().toString();
-                                float value = Float.parseFloat(valueStr);
-                                editTextBkPrice.setText(String.valueOf(value + 1));
-                            }
                             // right to left
-                            else if (final_x < initial_x){
+                            if (final_x < initial_x){
                                 addBook();
                             }
                         // vertical
@@ -127,6 +121,17 @@ public class MainActivity extends AppCompatActivity {
                         return true;
                     }
                     case MotionEvent.ACTION_MOVE: {
+                        int final_x = (int)motionEvent.getX();
+                        int final_y = (int)motionEvent.getY();
+
+                        if (Math.abs(initial_y - final_y) < MAX_DISTANCE) {
+                            if (initial_x < final_x) {
+                                String valueStr = editTextBkPrice.getText().toString();
+                                float value = Float.parseFloat(valueStr);
+                                editTextBkPrice.setText(String.valueOf(value + 1));
+                            }
+                        }
+
                         return true;
                     }
 

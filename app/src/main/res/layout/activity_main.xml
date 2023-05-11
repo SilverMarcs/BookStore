@@ -41,6 +41,7 @@
         android:ems="10"
         android:hint="Enter Price"
         android:inputType="number|numberDecimal"
+        android:text="0"
         android:textSize="16sp"
         app:layout_constraintBaseline_toBaselineOf="@+id/textViewPrice"
         app:layout_constraintEnd_toStartOf="@+id/guideline5"
