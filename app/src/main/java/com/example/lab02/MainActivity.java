@@ -95,6 +95,13 @@ public class MainActivity extends AppCompatActivity {
                         int final_x = (int)motionEvent.getX();
                         int final_y = (int)motionEvent.getY();
                         // horizontal
+
+                        // touch on top left corner
+                        if (initial_x < 50 && initial_y < 50) {
+                            editTextBkAuthor.setText(String.valueOf(editTextBkAuthor.getText()).toUpperCase());
+                            return true;
+                        }
+
                         if (Math.abs(initial_y - final_y) < MAX_DISTANCE) {
                             // left to right
                             if (initial_x < final_x) {
@@ -111,7 +118,11 @@ public class MainActivity extends AppCompatActivity {
                             // bottom to top
                             if (final_y < initial_y) {
                                 clearFields();
-                            };
+                            }
+                            // bottom to top
+                            if (initial_y < final_y) {
+                                finish();
+                            }
                         }
                         return true;
                     }
