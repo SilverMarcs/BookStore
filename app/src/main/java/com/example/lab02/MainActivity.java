@@ -11,10 +11,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.icu.number.Scale;
 import android.os.Bundle;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -24,6 +27,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.lab02.provider.Book;
 import com.example.lab02.provider.BookViewModel;
+import com.example.lab02.utils.RandomStringGenerator;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.database.ChildEventListener;
@@ -48,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
     public DatabaseReference dbRef;
     private View frameLayout;
     private int initial_x, initial_y;
+    private GestureDetector gestureDetector;
+    private ScaleGestureDetector scaleGestureDetector;
     private int MAX_DISTANCE = 60;
 
     @Override
@@ -64,6 +70,8 @@ public class MainActivity extends AppCompatActivity {
         fab = findViewById(R.id.fab);
         drawerlayout = findViewById(R.id.drawer_layout);
         frameLayout = findViewById(R.id.frame_id);
+        gestureDetector = new GestureDetector(this, new MyGestureDetector());
+        scaleGestureDetector = new ScaleGestureDetector(this, new MyScaleGestureDetector());
 
         // ViewModel
         viewModel = new ViewModelProvider(this).get(BookViewModel.class);
@@ -79,71 +87,82 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // gesture on Frame layout
-        frameLayout.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                int action = motionEvent.getActionMasked();
-
-                switch (action) {
-                    case MotionEvent.ACTION_DOWN: {
-                        initial_x = (int)motionEvent.getX();
-                        initial_y = (int)motionEvent.getY();
-                        return true;
-                    }
-                    case MotionEvent.ACTION_UP: {
-                        int final_x = (int)motionEvent.getX();
-                        int final_y = (int)motionEvent.getY();
-                        // horizontal
-
-                        // touch on top left corner
-                        if (initial_x < 50 && initial_y < 50) {
-                            editTextBkAuthor.setText(String.valueOf(editTextBkAuthor.getText()).toUpperCase());
-                            return true;
-                        }
-
-                        if (Math.abs(initial_y - final_y) < MAX_DISTANCE) {
-                            // right to left
-                            if (final_x < initial_x){
-                                addBook();
-                            }
-                        // vertical
-                        } else if (Math.abs(initial_x - final_x) < MAX_DISTANCE) {
-                            // bottom to top
-                            if (final_y < initial_y) {
-                                clearFields();
-                            }
-                            // bottom to top
-                            if (initial_y < final_y) {
-                                finish();
-                            }
-                        }
-                        return true;
-                    }
-                    case MotionEvent.ACTION_MOVE: {
-                        int final_x = (int)motionEvent.getX();
-                        int final_y = (int)motionEvent.getY();
-
-                        if (Math.abs(initial_y - final_y) < MAX_DISTANCE) {
-                            if (initial_x < final_x) {
-                                String valueStr = editTextBkPrice.getText().toString();
-                                float value = Float.parseFloat(valueStr);
-                                editTextBkPrice.setText(String.valueOf(value + 1));
-                            }
-                        }
-
-                        return true;
-                    }
-
-                    default:
-                        return false;
-                }
-
-            }
-        });
+        // Use below one
+        // gesture on Frame layout. Deprecated. Use below one using gesture detector
+//        frameLayout.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View view, MotionEvent motionEvent) {
+//                int action = motionEvent.getActionMasked();
+//
+//                switch (action) {
+//                    case MotionEvent.ACTION_DOWN: {
+//                        initial_x = (int)motionEvent.getX();
+//                        initial_y = (int)motionEvent.getY();
+//                        return true;
+//                    }
+//                    case MotionEvent.ACTION_UP: {
+//                        int final_x = (int)motionEvent.getX();
+//                        int final_y = (int)motionEvent.getY();
+//                        // horizontal
+//
+//                        // touch on top left corner
+//                        if (initial_x < 50 && initial_y < 50) {
+//                            editTextBkAuthor.setText(String.valueOf(editTextBkAuthor.getText()).toUpperCase());
+//                            return true;
+//                        }
+//
+//                        if (Math.abs(initial_y - final_y) < MAX_DISTANCE) {
+//                            // right to left
+//                            if (final_x < initial_x){
+//                                addBook();
+//                            }
+//                        // vertical
+//                        } else if (Math.abs(initial_x - final_x) < MAX_DISTANCE) {
+//                            // bottom to top
+//                            if (final_y < initial_y) {
+//                                clearFields();
+//                            }
+//                            // bottom to top
+//                            if (initial_y < final_y) {
+//                                finish();
+//                            }
+//                        }
+//                        return true;
+//                    }
+//                    case MotionEvent.ACTION_MOVE: {
+//                        int final_x = (int)motionEvent.getX();
+//                        int final_y = (int)motionEvent.getY();
+//
+//                        if (Math.abs(initial_y - final_y) < MAX_DISTANCE) {
+//                            if (initial_x < final_x) {
+//                                String valueStr = editTextBkPrice.getText().toString();
+//                                float value = Float.parseFloat(valueStr);
+//                                editTextBkPrice.setText(String.valueOf(value + 1));
+//                            }
+//                        }
+//
+//                        return true;
+//                    }
+//
+//                    default:
+//                        return false;
+//                }
+//
+//            }
+//        });
 
 
         // Drawer Layout
+
+        frameLayout.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                gestureDetector.onTouchEvent(motionEvent);
+                return  true;
+            }
+
+        });
+
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawerlayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerlayout.addDrawerListener(toggle);
@@ -240,9 +259,6 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.clear_fields_option) {
             clearFields();
         }
-//        else if (id == R.id.load_data_option) {
-//            loadBook();
-//        }
         else if (id == R.id.total_books_option) {
             Toast.makeText(this, "Implement async operation", Toast.LENGTH_SHORT).show();
         }
@@ -291,6 +307,14 @@ public class MainActivity extends AppCompatActivity {
         addBookToast.show();
     }
 
+    public void loadDefaultBook() {
+        editTextBkTitle.setText("The Lord of the Rings");
+        editTextBkIsbn.setText("9785546");
+        editTextBkAuthor.setText("J.R.R. Tolkien");
+        editTextBkDesc.setText("The Lord of the Rings is cool");
+        editTextBkPrice.setText("100");
+    }
+
     public void deleteAll() {
         viewModel.deleteAll();
     }
@@ -300,6 +324,49 @@ public class MainActivity extends AppCompatActivity {
 
         for (View field : allFields) {
             ((EditText) field).setText("");
+        }
+    }
+
+    private class MyGestureDetector extends GestureDetector.SimpleOnGestureListener {
+        @Override
+        public boolean onDoubleTap(MotionEvent e) {
+            clearFields();
+            return super.onDoubleTap(e);
+        }
+
+        @Override
+        public boolean onSingleTapUp(@NonNull MotionEvent e) {
+            editTextBkIsbn.setText(RandomStringGenerator.generateNewRandomString(10));
+            return super.onSingleTapUp(e);
+        }
+
+        @Override
+        public void onLongPress(@NonNull MotionEvent e) {
+            loadDefaultBook();
+            super.onLongPress(e);
+        }
+
+        @Override
+        public boolean onFling(@NonNull MotionEvent e1, @NonNull MotionEvent e2, float velocityX, float velocityY) {
+//            moveTaskToBack(true);
+            return super.onFling(e1, e2, velocityX, velocityY);
+        }
+
+        @Override
+        public boolean onScroll(@NonNull MotionEvent e1, @NonNull MotionEvent e2, float distanceX, float distanceY) {
+            float currentPrice = Float.parseFloat(editTextBkPrice.getText().toString());
+            float newPrice = currentPrice - distanceX;
+            editTextBkPrice.setText(String.valueOf(newPrice));
+
+            return super.onScroll(e1, e2, distanceX, distanceY);
+        }
+    }
+
+    private class MyScaleGestureDetector extends ScaleGestureDetector.SimpleOnScaleGestureListener {
+        @Override
+        public boolean onScale(ScaleGestureDetector detector) {
+            editTextBkAuthor.setText(String.valueOf(editTextBkAuthor.getText()).toUpperCase());
+            return super.onScale(detector);
         }
     }
 }
