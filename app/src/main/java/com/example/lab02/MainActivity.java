@@ -348,15 +348,22 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public boolean onFling(@NonNull MotionEvent e1, @NonNull MotionEvent e2, float velocityX, float velocityY) {
-//            moveTaskToBack(true);
+            if (velocityX > 1000 || velocityY > 1000) {
+                moveTaskToBack(true);
+            }
             return super.onFling(e1, e2, velocityX, velocityY);
         }
 
         @Override
         public boolean onScroll(@NonNull MotionEvent e1, @NonNull MotionEvent e2, float distanceX, float distanceY) {
-            float currentPrice = Float.parseFloat(editTextBkPrice.getText().toString());
-            float newPrice = currentPrice - distanceX;
-            editTextBkPrice.setText(String.valueOf(newPrice));
+            if (Math.abs(distanceX) > Math.abs(distanceY)) {                // horizontal scroll
+                float currentPrice = Float.parseFloat(editTextBkPrice.getText().toString());
+                float newPrice = currentPrice - distanceX;
+                editTextBkPrice.setText(String.valueOf(newPrice));
+            } else if (Math.abs(distanceY) > Math.abs(distanceX)) {         // vertical scroll
+                editTextBkTitle.setText("untitled");
+            }
+
 
             return super.onScroll(e1, e2, distanceX, distanceY);
         }
