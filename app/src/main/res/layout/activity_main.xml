@@ -159,14 +159,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="138dp" />
+        app:layout_constraintGuide_begin="16dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline11"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="453dp" />
+        app:layout_constraintGuide_begin="335dp" />
 
     <FrameLayout
         android:id="@+id/fragment_container"
@@ -182,9 +182,9 @@
     <FrameLayout
         android:id="@+id/frame_id"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="1dp"
         android:layout_marginTop="16dp"
-        android:background="#cccccc"
+        android:background="#FFFFFF"
         app:layout_constraintBottom_toTopOf="@+id/guideline6"
         app:layout_constraintEnd_toStartOf="@+id/guideline5"
         app:layout_constraintStart_toStartOf="@+id/guideline2"
