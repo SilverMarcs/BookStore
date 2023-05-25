@@ -1,5 +1,12 @@
-# Login page
+# Login Page
 
+Newly Added View Components:
+- TextView (for displaying the title of the App)
+- EditText (password and username)
+- Button (login and sign up)
+- Toast (for displaying messages to the user)
+
+Implementation:
 The feature is about having a login/sign up page before accessing the BookStore app
 
 When the user enters the app for the first time, they will have no way to login since they have not saved
@@ -14,4 +21,12 @@ It also uses Toast messages to display informative messages to the user such as 
 "Incorrect Credentials", etc
 
 Note that we use finish() in the login function because we do not want the user to go back to the login
-page
+page.
+
+The AndroidManifest.xml file has been updated to include the LoginPage as the launcher activity and the
+MainActivity is no longer the launcher activity.
+
+Simple User Guide:
+- Enter a username and password and press sign up
+- Enter the same username and password and press login
+- You will be taken to the BookList page
